@@ -1,20 +1,19 @@
+from django.forms import model_to_dict
 from django.http import JsonResponse
 import json
+from products.models import Product
 
 def api_home(request, *args, **kwargs):
-    body = request.body
+    model_data = Product.objects.all().order_by("?").first()
     data = {}
-    try:
-        data = json.loads(body)
-    except:
-        pass
-    print("header: ", request.headers)
-    data["content_type"] = request.content_type
-    data["headers"] = request.headers
-    print("this is byte string" ,body)
-    print("this is json data" ,data)
-    print("data keys: ", data.keys())
-    print("GET: ", request.GET)
-    print("POST: ", request.POST)
-    return JsonResponse({"message": "Hi there this is your Django API Response"})
+    if model_data:
+        # data["id"] = model_data.id
+        # data["title"] = model_data.title
+        # data["content"] = model_data.content
+        # data["price"] = model_data.price
+        # yuqoridagi commentga teng kuchli quyida:
+        data = model_to_dict(model_data, fields=['id']) # only get id
+        data = model_to_dict(model_data) # default -> all fields
+    return JsonResponse(data)
+    
 
