@@ -40,6 +40,27 @@ class ProductDetailAPIView(generics.RetrieveAPIView):
 
 product_detail_view = ProductDetailAPIView.as_view()
 
+class ProductUpdateAPIView(generics.UpdateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializers
+    lookup_field = "pk"
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+
+product_update_view = ProductUpdateAPIView.as_view()
+
+
+class ProductDestroyAPIView(generics.DestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializers
+    lookup_field = "pk"
+
+    def perform_destroy(self, instance):
+        return super().perform_destroy(instance)
+
+product_delete_view = ProductDestroyAPIView.as_view()
+
 @api_view(["GET", "POST"])
 def product_alt_view(request, pk=None, *args, **kargs):
     method = request.method
