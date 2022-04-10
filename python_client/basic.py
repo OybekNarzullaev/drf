@@ -1,7 +1,7 @@
 import requests
 
-endpoint = "http://127.0.0.1:8000/api/"
+endpoint = "http://127.0.0.1:8000/api/post/"
 
-get_response = requests.get(endpoint, params={"abs": 123}, json={"query": "Hello world"})
+get_response = requests.post(endpoint, json={"title": "Hello world"})
 
 print(f"status: {get_response.status_code}\ndata: {get_response.json()}")
