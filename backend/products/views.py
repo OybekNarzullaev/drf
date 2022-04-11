@@ -1,4 +1,5 @@
-from rest_framework import generics
+from requests import request
+from rest_framework import generics, mixins
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
@@ -61,6 +62,7 @@ class ProductDestroyAPIView(generics.DestroyAPIView):
 
 product_delete_view = ProductDestroyAPIView.as_view()
 
+# barchasini bittada olish uchun: (funcsiyada)
 @api_view(["GET", "POST"])
 def product_alt_view(request, pk=None, *args, **kargs):
     method = request.method
@@ -80,3 +82,39 @@ def product_alt_view(request, pk=None, *args, **kargs):
             return Response(data={"message": "Invalid data"}, status=400)
         
 
+# barchasini bittada olish class da
+class ProductMixinView( 
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.UpdateModelMixin, 
+    mixins.RetrieveModelMixin, 
+    generics.GenericAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializers
+    lookup_field = "pk"
+
+    def get(self, request, *args, **kargs): # http => get
+        pk = kargs.get("pk")
+        if pk is not None:
+            return self.retrieve(request, *args, **kargs)
+        return self.list(request, *args, **kargs)
+    
+    def post(self, request, *args, **kargs): # http => post
+        return self.create(request, *args, **kargs)
+    
+    # except from content = None
+    def perform_create(self, serializer):
+        title = serializer.validated_data.get("title")
+        content = serializer.validated_data.get("content") or None
+        if content is None:
+            content = title
+        serializer.save(content = content)
+
+    def put(self, request, *args, **kwargs): # http -> put
+        return self.update(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs): # http -> delete
+        return self.destroy(request, *args, **kwargs)
+    
+product_mixin_view = ProductMixinView.as_view()
