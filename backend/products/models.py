@@ -13,3 +13,6 @@ class Product(models.Model):
     @property
     def discount(self):
         return "123"
+
+    def __str__(self) -> str:
+        return self.title

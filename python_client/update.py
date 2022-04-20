@@ -3,7 +3,7 @@ import requests
 id = int(input("id -> "))
 title = input("title -> ")
 
-endpoint = f"http://127.0.0.1:8000/api/products/{id}/"
+endpoint = f"http://127.0.0.1:8000/api/products/{id}/update"
 
 data = {"title": title}
 

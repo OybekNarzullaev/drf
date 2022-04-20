@@ -1,5 +1,4 @@
-from requests import request
-from rest_framework import generics, mixins
+from rest_framework import generics, mixins, permissions, authentication
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
@@ -24,7 +23,14 @@ from products.serializers import ProductSerializers
 class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializers
-    # ruxsatlarni boshqarish:
+    # sessiya authentikatsiyasi
+    authentication_classes = [authentication.SessionAuthentication]
+    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # permission_classes = [permissions.IsAdminUser]
+    # permission_classes = [permissions.AllowAny]
+    
+    
     def perform_create(self, serializer):
         title = serializer.validated_data.get("title")
         content = serializer.validated_data.get("content") or None
