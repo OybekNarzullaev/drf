@@ -1,9 +1,7 @@
-from rest_framework import generics, mixins, permissions, authentication
+from rest_framework import generics, mixins
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
 from django.shortcuts import get_object_or_404
-from .permissions import IsStaffEditorPermission
 from products.models import Product
 from products.serializers import ProductSerializers
 
@@ -12,7 +10,6 @@ from products.serializers import ProductSerializers
 # class ProductCreateAPIView(generics.CreateAPIView):
 #     queryset = Product.objects.all()
 #     serializer_class = ProductSerializers
-#     # ruxsatlarni boshqarish uchun
 #     def perform_create(self, serializer):
 #         title = serializer.validated_data.get("title")
 #         content = serializer.validated_data.get("content") or None
@@ -23,13 +20,14 @@ from products.serializers import ProductSerializers
 # product_create_view = ProductCreateAPIView.as_view()
 
 # bu endi ham yaratish va ham barcha ma'lumotlarni olish uchun
-from api.authentication import TokenAuthentication
+from api.mixins import StaffEditorPermissionMixin
 
-class ProductListCreateAPIView(generics.ListCreateAPIView):
+class ProductListCreateAPIView(generics.ListCreateAPIView, StaffEditorPermissionMixin):
     queryset = Product.objects.all()
     serializer_class = ProductSerializers
-    permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission] # custom permission 
 
+    # ushu funksiya qachonki bizga content bo'sh kelsa 
+    # title contentga tenglash uchun kerak
     def perform_create(self, serializer):
         title = serializer.validated_data.get("title")
         content = serializer.validated_data.get("content") or None
