@@ -2,8 +2,10 @@ from rest_framework import generics, mixins, permissions, authentication
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from .permissions import IsStaffEditorPermission
 from products.models import Product
 from products.serializers import ProductSerializers
+
 
 # # CreateAPIView yangi item qo'shish uchun
 # class ProductCreateAPIView(generics.CreateAPIView):
@@ -26,11 +28,12 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
     # sessiya authentikatsiyasi
     authentication_classes = [authentication.SessionAuthentication]
     # permission_classes = [permissions.IsAuthenticated]
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     # permission_classes = [permissions.IsAdminUser]
     # permission_classes = [permissions.AllowAny]
-    
-    
+    # permission_classes = [permissions.DjangoModelPermissions] # admin tomonidan qilingan ruxsatlar
+    permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission] # custom permission 
+
     def perform_create(self, serializer):
         title = serializer.validated_data.get("title")
         content = serializer.validated_data.get("content") or None
