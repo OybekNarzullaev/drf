@@ -94,6 +94,7 @@ class ProductMixinView(
     mixins.RetrieveModelMixin, 
     generics.GenericAPIView):
     queryset = Product.objects.all()
+    
     serializer_class = ProductSerializers
     lookup_field = "pk"
 
