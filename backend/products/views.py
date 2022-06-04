@@ -25,15 +25,20 @@ from api.mixins import StaffEditorPermissionMixin
 class ProductListCreateAPIView(generics.ListCreateAPIView, StaffEditorPermissionMixin):
     queryset = Product.objects.all()
     serializer_class = ProductSerializers
-
-    # ushu funksiya qachonki bizga content bo'sh kelsa 
-    # title contentga tenglash uchun kerak
     def perform_create(self, serializer):
         title = serializer.validated_data.get("title")
         content = serializer.validated_data.get("content") or None
         if content is None:
             content = title
-        serializer.save(content = content)
+        serializer.save(user = self.request.user, content = content)
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        request = self.request
+        user = request.user
+        if not user.is_authenticated:
+            return Product.objects.none()
+        return queryset.filter(user=request.user)
 
 product_list_creat_view = ProductListCreateAPIView.as_view()
 
