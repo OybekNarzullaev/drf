@@ -16,5 +16,10 @@ if get_auth_response.status_code == 200:
     headers = {
         "Authorization": f"Bearer {token}"
     }
-    get_response = requests.get(endpoint, headers=headers)
-    print(f"status: {get_response.status_code}\ndata: {get_response.json()}")
+
+    get_response = requests.get(endpoint)
+    data = get_response.json()
+    next_url = data['next']
+    results = data['results']
+    print(next_url)
+    print(f"status: {get_response.status_code}\ndata: {data}")

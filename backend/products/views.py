@@ -37,7 +37,7 @@ class ProductListCreateAPIView(generics.ListCreateAPIView, StaffEditorPermission
         request = self.request
         user = request.user
         if not user.is_authenticated:
-            return Product.objects.none()
+            return Product.objects.all()
         return queryset.filter(user=request.user)
 
 product_list_creat_view = ProductListCreateAPIView.as_view()

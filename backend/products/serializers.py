@@ -6,21 +6,21 @@ from api.serializers import UserPublicSerializer
 
 class ProductSerializers(serializers.ModelSerializer):
     url = serializers.SerializerMethodField(read_only=True)
-    edit_url = serializers.SerializerMethodField(read_only=True)
+    # edit_url = serializers.SerializerMethodField(read_only=True)
     title = serializers.CharField(
         validators=[validate_title, unique_title, validate_no_hello_title]
     )
     my_user_data = serializers.SerializerMethodField(read_only=True)
-    owner = UserPublicSerializer(source='user', read_only=True)
-    email = serializers.EmailField(source='user.email', read_only=True)
+    # owner = UserPublicSerializer(source='user', read_only=True)
+    # email = serializers.EmailField(source='user.email', read_only=True)
     class Meta:
         model = Product
         fields = [
             # 'user',
             'my_user_data',
-            'owner',
-            'email',
-            'edit_url',
+            # 'owner',
+            # 'email',
+            # 'edit_url',
             'url',
             'id',
             'title',
@@ -33,6 +33,7 @@ class ProductSerializers(serializers.ModelSerializer):
     def get_my_user_data(self, obj):
         print(obj)
         return {
+            'id': obj.user.id,
             "username": obj.user.username
         }
     
